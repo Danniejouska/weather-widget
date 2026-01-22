@@ -2,32 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Weather Widget</title>
+  <title>Multiple Weather Widget</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      background: transparent;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .weather-card {
+      width: 150px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f7f7f7;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .city { font-size: 14px; color: #F5F527; }
+    .temp { font-size: 28px; font-weight: 600; margin: 6px 0; }
+    .desc { font-size: 12px; color: #333; }
+  </style>
 </head>
 <body>
 
-  <div id="weather">Loading weather…</div>
+  <div class="weather-card" id="city1">Loading...</div>
+  <div class="weather-card" id="city2">Loading...</div>
+  <div class="weather-card" id="city3">Loading...</div>
+  <div class="weather-card" id="city4">Loading...</div>
 
   <script>
     const apiKey = "bc0ced695fa363310bf40e49e18f4748";
-    const city = "Da Lat";
+    const cities = ["Ho Chi Minh", "Da Lat", "Nha Trang", "Ha Noi"];
+    const divIds = ["city1", "city2", "city3", "city4"];
 
-    fetch("https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&units=metric&appid=" + apiKey)
-      .then(res => res.json())
-      .then(data => {
-        if (data.cod !== 200) {
-          document.getElementById("weather").innerText = data.message;
-          return;
-        }
-
-        document.getElementById("weather").innerHTML =
-          "<h3>" + data.name + "</h3>" +
-          "<p>" + Math.round(data.main.temp) + "°C</p>" +
-          "<p>" + data.weather[0].description + "</p>";
-      })
-      .catch(() => {
-        document.getElementById("weather").innerText = "Failed to load weather";
-      });
+    cities.forEach((city, index) => {
+      fetch("https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&units=metric&appid=" + apiKey)
+        .then(res => res.json())
+        .then(data => {
+          const div = document.getElementById(divIds[index]);
+          if (data.cod !== 200) {
+            div.innerText = data.message;
+            return;
+          }
+          div.innerHTML = "<div class='city'>" + data.name + "</div>" +
+                          "<div class='temp'>" + Math.round(data.main.temp) + "°C</div>" +
+                          "<div class='desc'>" + data.weather[0].description + "</div>";
+        })
+        .catch(() => {
+          document.getElementById(divIds[index]).innerText = "Failed to load";
+        });
+    });
   </script>
 
 </body>
